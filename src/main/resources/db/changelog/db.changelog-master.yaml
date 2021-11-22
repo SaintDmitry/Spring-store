@@ -1,0 +1,442 @@
+databaseChangeLog:
+  - preConditions:
+      - runningAs:
+          username: postgres
+          password: postgres
+
+  - changeSet:
+      id: 1
+      author: i
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    unique: false
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar(255)
+              - column:
+                  name: last_name
+                  type: varchar(255)
+              - column:
+                  name: email
+                  type: varchar(255)
+
+  - changeSet:
+      id: 2
+      author: i
+      comment: "Create admin user"
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: "admin"
+              - column:
+                  name: password
+                  value: "$2a$10$uedJ6jkBS08x5mxZY6gV6.LAKSd202CiVutxz5VDq3TIyj9alkmIq"
+
+  - changeSet:
+      id: 3
+      author: i
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+  - changeSet:
+      id: 4
+      author: i
+      comment: "Create default user roles"
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: "ROLE_ADMIN"
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: "ROLE_CLIENT"
+
+  - changeSet:
+      id: 5
+      author: i
+      changes:
+        - createTable:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_user_id
+                    references: users(id)
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_role_id
+                    references: roles(id)
+                    nullable: false
+
+  - changeSet:
+      id: 6
+      author: i
+      comment: "Assign ADMIN role to admin user"
+      changes:
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  value: 1
+              - column:
+                  name: role_id
+                  value: 1
+
+  - changeSet:
+      id: 7
+      author: i
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: price
+                  type: DECIMAL(19, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(4096)
+              - column:
+                  name: brand_id
+                  type: int
+
+  - changeSet:
+      id: 8
+      author: i
+      changes:
+        - createTable:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+
+  - changeSet:
+      id: 9
+      author: i
+      changes:
+        - createTable:
+            tableName: addresses
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: int
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 10
+      author: i
+      changes:
+        - createTable:
+            tableName: pictures_data
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: data
+                  type: MEDIUMBLOB
+
+  - changeSet:
+      id: 11
+      author: i
+      changes:
+        - createTable:
+            tableName: pictures
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content_type
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: bigint
+              - column:
+                  name: picture_data_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_picture_data_id
+                    references: pictures_data(id)
+                    nullable: false
+
+  - changeSet:
+      id: 12
+      author: i
+      changes:
+        - createTable:
+            tableName: carts
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+              - column:
+                  name: product_id
+                  type: bigint
+              - column:
+                  name: price
+                  type: int
+              - column:
+                  name: quantity
+                  type: int
+              - column:
+                  name: order_id
+                  type: bigint
+
+  - changeSet:
+      id: 13
+      author: i
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: address_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date
+                  type: date
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 14
+      author: i
+      changes:
+        - createTable:
+            tableName: products_pictures
+            columns:
+              - column:
+                  name: product_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_product_id
+                    references: products(id)
+                    nullable: false
+              - column:
+                  name: picture_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_picture_id
+                    references: pictures(id)
+                    nullable: false
+
+  - changeSet:
+      id: 15
+      author: i
+      changes:
+        - createTable:
+            tableName: users_orders
+            columns:
+              - column:
+                  name: puser_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_user_id
+                    references: users(id)
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_order_id
+                    references: orders(id)
+                    nullable: false
+
+  - changeSet:
+      id: 16
+      author: i
+      changes:
+        - createTable:
+            tableName: users_addresses
+            columns:
+              - column:
+                  name: user_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_user_id
+                    references: users(id)
+                    nullable: false
+              - column:
+                  name: address_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_address_id
+                    references: addresses(id)
+                    nullable: false
+
+  - changeSet:
+      id: 17
+      author: i
+      changes:
+        - createTable:
+            tableName: products_categories
+            columns:
+              - column:
+                  name: product_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_product_id
+                    references: products(id)
+                    nullable: false
+              - column:
+                  name: category_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_category_id
+                    references: categories(id)
+                    nullable: false
+
+  - changeSet:
+      id: 18
+      author: i
+      changes:
+        - createTable:
+            tableName: brands
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+
+  - changeSet:
+      id: 19
+      author: i
+      changes:
+        - createTable:
+            tableName: products_brands
+            columns:
+              - column:
+                  name: product_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_product_id
+                    references: products(id)
+                    nullable: false
+              - column:
+                  name: brand_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_brand_id
+                    references: brands(id)
+                    nullable: false
+

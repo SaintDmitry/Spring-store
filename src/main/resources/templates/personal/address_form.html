@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="personal/fragments/header.html :: head"></head>
+
+<body>
+<!-- HEADER -->
+<th:block th:if="${error}">
+    <div th:replace="personal/fragments/header :: alert"></div>
+</th:block>
+<header th:replace="personal/fragments/header.html :: header"></header>
+<header th:replace="personal/fragments/header.html :: navigation"></header>
+<!-- /HEADER -->
+
+<div class="d-flex">
+    <div class="container">
+        <div class="content p-4">
+            <br>
+            <h2 class="mb-4" th:if="${edit}">Edit delivery address</h2>
+            <h2 class="mb-4" th:if="${create}">Create delivery address</h2>
+
+            <form th:object="${address}" method="post" th:action="@{/personal/address}" enctype="multipart/form-data">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <input th:type="hidden" th:field="*{id}">
+                        <div class="form-group">
+                            <label for="name">Address</label>
+                            <input th:field="*{name}" type="text" class="form-control" id="name"
+                                   placeholder="Enter address" required>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+            <br>
+        </div>
+    </div>
+</div>
+<!-- FOOTER -->
+<footer th:replace="fragments/footer.html :: footer"></footer>
+<!-- /FOOTER -->
+
+<!-- jQuery Plugins -->
+<script th:replace="fragments/footer.html :: scripts"></script>
+
+</body>
+</html>

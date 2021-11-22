@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="personal/fragments/header.html :: head"></head>
+
+<body>
+<!-- HEADER -->
+<th:block th:if="${error}">
+    <div th:replace="personal/fragments/header :: alert"></div>
+</th:block>
+<header th:replace="personal/fragments/header.html :: header"></header>
+<header th:replace="personal/fragments/header.html :: navigation"></header>
+<!-- /HEADER -->
+
+<div class="d-flex">
+    <div class="container">
+        <div class="content p-4">
+            <br>
+            <h2 class="mb-4">Address list</h2>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form class="form-group" th:action="@{/personal/address/create}">
+                        <button type="submit" class="btn btn-primary">Create new</button>
+                    </form>
+
+                    <table id="categories" class="table table-hover" cellspacing="0" width="100%">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th class="actions">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="adr : ${addresses}">
+                            <td th:text="${adr.name}"></td>
+                            <td>
+                                <a th:href="@{personal/address/{id}/edit(id=${adr.id})}" class="btn btn-icon btn-pill btn-primary" data-toggle="tooltip" title="Edit"><i class="fa fa-fw fa-edit"></i></a>
+                                <a th:href="@{personal/address/{id}/delete(id=${adr.id})}" class="btn btn-icon btn-pill btn-danger" data-toggle="tooltip" title="Delete"><i class="fa fa-fw fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer th:replace="fragments/footer.html :: footer"></footer>
+<!-- /FOOTER -->
+
+<!-- jQuery Plugins -->
+<script th:replace="fragments/footer.html :: scripts"></script>
+
+</body>
+</html>
